@@ -2,26 +2,28 @@ import 'server-only'
 
 import {
   createAI,
-  getMutableAIState,
+  createStreamableValue,
   getAIState,
-  render,
-  createStreamableValue
+  getMutableAIState,
+  render
 } from 'ai/rsc'
 import OpenAI from 'openai'
 
+import { saveChat } from '@/app/actions'
+import { auth } from '@/auth'
+import { BotMessage, SpinnerMessage, UserMessage } from '@/components/message'
+import { Chat } from '@/lib/types'
 import {
   nanoid
 } from '@/lib/utils'
-import { saveChat } from '@/app/actions'
-import { SpinnerMessage, UserMessage, BotMessage } from '@/components/message'
-import { Chat } from '@/lib/types'
-import { auth } from '@/auth'
 
 import { getPrompt } from '@/app/api/getDataFromKV'
 
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || ''
+
+  apiKey: process.env.OPENAI_API_KEY || '',
+  baseURL: process.env.OPENAI_BASE_URL
 })
 
 
@@ -46,7 +48,7 @@ async function submitUserMessage(content: string, type: string) {
   let textNode: undefined | React.ReactNode
 
   const ui = render({
-    model: 'gpt-4',
+    model: 'gpt-4o',
     provider: openai,
     initial: <SpinnerMessage />,
     messages: [
