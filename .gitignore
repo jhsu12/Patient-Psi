@@ -13,6 +13,9 @@ coverage
 out/
 build
 
+# python
+python/.env
+
 # misc
 .DS_Store
 *.pem
